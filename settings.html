@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Ayarlar - Siverek Belediyesi</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="utils.js"></script>
+    <script>
+        // Force page to not cache
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, reload to get fresh data
+                window.location.reload();
+            }
+        });
+        
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .dark .setting-item {
+            border-color: #374151;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .sidebar {
+            width: 80px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white dark:bg-background-dark border-r border-primary/20 dark:border-primary/30 flex flex-col items-center py-4">
+            <div class="mb-8">
+                <img alt="Siverek Municipality Logo" class="w-10 h-10 mx-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbIfQfOwULYctFVQU3_MF_dt6Yi8qc9ltD82f4lr8g82-VAGHf5BeGYYcpY_NcD4Z26-7Nq9Sqm4eKr7IWiEfCwyoSxynz3BlD0nuzyweuL46zJR3IV7CkoCzl0QdAM_eNOFjDZyCJTkRV5nYxgXcUBIbDyc0v5UPW8GRD1uvirnznZjtHG5VWGMttrSEvP4aPTBNXM2wBvkqEEfW-7h86SkxduIHUQqzyTWJMGC22nE8zAs5VJ_EMOJB3bINfbOjiBAo80EA9eU"/>
+            </div>
+            <nav class="flex flex-col items-center space-y-6 flex-grow">
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="index.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <p class="text-xs font-medium mt-1">Pano</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="inventory-list.html">
+                    <span class="material-symbols-outlined text-2xl">inventory</span>
+                    <p class="text-xs font-medium mt-1">Envanter</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="reports.html">
+                    <span class="material-symbols-outlined text-2xl">bar_chart</span>
+                    <p class="text-xs font-medium mt-1">Raporlar</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-primary" href="settings.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <p class="text-xs font-medium mt-1">Ayarlar</p>
+                </a>
+            </nav>
+            <button class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" onclick="logout()">
+                <span class="material-symbols-outlined text-2xl">logout</span>
+                <p class="text-xs font-medium mt-1">Çıkış</p>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col">
+            <header class="flex items-center justify-between p-4 border-b border-primary/20 dark:border-primary/30">
+                <div class="text-center w-full">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Siverek Belediyesi Bilgi İşlem Müdürlüğü Depo Takip Sistemi</h1>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white mt-2">Ayarlar</p>
+                </div>
+                <div class="flex items-center gap-2 absolute right-4">
+                    <div class="flex flex-col items-end">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="current-user">Kullanıcı</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" id="user-role">Rol</p>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow p-4 overflow-y-auto">
+                <div class="rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+                    <div class="setting-item">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">Karanlık Mod</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Uygulamanın görünümünü değiştir</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" id="dark-mode-toggle">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">Bildirimler</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Stok uyarılarını etkinleştir</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" id="notifications-toggle" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div>
+                            <h3 class="font-medium text-red-600 dark:text-red-400">Tüm Verileri Temizle</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Tüm envanter verilerini sil</p>
+                        </div>
+                        <button class="text-red-600 dark:text-red-400 font-medium text-sm" onclick="clearAllData()">Temizle</button>
+                    </div>
+                </div>
+                
+                <div class="rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div class="setting-item">
+                        <div>
+                            <h3 class="font-medium text-gray-900 dark:text-white">Kullanıcı Yönetimi</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Yeni kullanıcı ekle veya mevcut kullanıcıları yönet</p>
+                        </div>
+                        <button class="text-primary font-medium text-sm" onclick="showUserManagement()">Yönet</button>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <p>Siverek Belediyesi Envanter Takip Sistemi</p>
+                    <p class="mt-1">Sürüm 1.0.0</p>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div id="export-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Veri Dışa Aktarma</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Envanter verileriniz bir JSON dosyası olarak indirilecektir.</p>
+            <div class="flex gap-3">
+                <button class="flex-1 py-2 px-4 rounded-lg bg-input-light dark:bg-input-dark text-foreground-light dark:text-foreground-dark font-bold" onclick="closeExportModal()">İptal</button>
+                <button class="flex-1 py-2 px-4 rounded-lg bg-primary text-white font-bold" onclick="downloadData()">İndir</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="user-management-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Kullanıcı Yönetimi</h3>
+                <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="closeUserManagement()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div class="mb-6">
+                <h4 class="font-medium text-gray-900 dark:text-white mb-3">Yeni Kullanıcı Ekle</h4>
+                <div class="space-y-3">
+                    <div>
+                        <input type="text" id="new-username" placeholder="Kullanıcı adı" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary p-2">
+                    </div>
+                    <div>
+                        <input type="password" id="new-password" placeholder="Şifre" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary p-2">
+                    </div>
+                    <div>
+                        <select id="new-user-role" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary p-2">
+                            <option value="user">Kullanıcı</option>
+                            <option value="admin">Yönetici</option>
+                        </select>
+                    </div>
+                    <button class="w-full py-2 px-4 rounded-lg bg-primary text-white font-bold" onclick="addNewUser()">Kullanıcı Ekle</button>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-medium text-gray-900 dark:text-white mb-3">Mevcut Kullanıcılar</h4>
+                <div class="space-y-2" id="users-list">
+                    <!-- Users will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display current user info
+            document.getElementById('current-user').textContent = currentUser.username;
+            document.getElementById('user-role').textContent = currentUser.role === 'admin' ? 'Yönetici' : 'Kullanıcı';
+            
+            // Check if user is admin
+            if (currentUser.role !== 'admin') {
+                // Hide user management section for non-admin users
+                const userManagementSection = document.querySelector('.setting-item').parentElement.lastElementChild;
+                userManagementSection.style.display = 'none';
+            }
+            
+            // Load settings from localStorage
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            const notifications = localStorage.getItem('notifications') !== 'false';
+            
+            // Apply settings
+            document.getElementById('dark-mode-toggle').checked = darkMode;
+            document.getElementById('notifications-toggle').checked = notifications;
+            
+            // Apply dark mode immediately
+            if (darkMode) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            // Add event listeners
+            document.getElementById('dark-mode-toggle').addEventListener('change', function() {
+                const isDark = this.checked;
+                localStorage.setItem('darkMode', isDark);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+            
+            document.getElementById('notifications-toggle').addEventListener('change', function() {
+                localStorage.setItem('notifications', this.checked);
+            });
+        });
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function showUserManagement() {
+            // Load users
+            loadUsers();
+            document.getElementById('user-management-modal').classList.remove('hidden');
+        }
+        
+        function closeUserManagement() {
+            document.getElementById('user-management-modal').classList.add('hidden');
+        }
+        
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('inventoryUsers')) || [];
+            const usersList = document.getElementById('users-list');
+            
+            usersList.innerHTML = '';
+            
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'flex justify-between items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg';
+                userElement.innerHTML = `
+                    <div>
+                        <p class="font-medium text-gray-900 dark:text-white">${user.username}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">${user.role === 'admin' ? 'Yönetici' : 'Kullanıcı'}</p>
+                    </div>
+                    ${user.username !== 'admin' ? `<button class="text-red-600 dark:text-red-400" onclick="deleteUser('${user.id}')">Sil</button>` : '<span class="text-gray-500 dark:text-gray-400">Sistem</span>'}
+                `;
+                usersList.appendChild(userElement);
+            });
+        }
+        
+        function addNewUser() {
+            const username = document.getElementById('new-username').value.trim();
+            const password = document.getElementById('new-password').value;
+            const role = document.getElementById('new-user-role').value;
+            
+            if (!username || !password) {
+                alert('Lütfen kullanıcı adı ve şifre girin');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('inventoryUsers')) || [];
+            const userExists = users.some(user => user.username === username);
+            
+            if (userExists) {
+                alert('Bu kullanıcı adı zaten mevcut');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                username: username,
+                password: password, // In a real app, this should be hashed
+                role: role,
+                createdAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('inventoryUsers', JSON.stringify(users));
+            
+            // Clear form
+            document.getElementById('new-username').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('new-user-role').value = 'user';
+            
+            // Reload users list
+            loadUsers();
+            
+            alert('Kullanıcı başarıyla eklendi');
+        }
+        
+        function deleteUser(userId) {
+            if (confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')) {
+                const users = JSON.parse(localStorage.getItem('inventoryUsers')) || [];
+                const updatedUsers = users.filter(user => user.id !== userId);
+                localStorage.setItem('inventoryUsers', JSON.stringify(updatedUsers));
+                loadUsers();
+            }
+        }
+        
+        function exportData() {
+            document.getElementById('export-modal').classList.remove('hidden');
+        }
+        
+        function closeExportModal() {
+            document.getElementById('export-modal').classList.add('hidden');
+        }
+        
+        function downloadData() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            const dataStr = JSON.stringify(products, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'envanter-verileri.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            closeExportModal();
+        }
+        
+        function exportToJSON() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            const dataStr = JSON.stringify(products, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'envanter-verileri.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        function exportToExcel() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            
+            if (products.length === 0) {
+                alert('Dışa aktarılacak veri bulunamadı');
+                return;
+            }
+            
+            // Prepare data for export
+            const exportData = products.map(product => ({
+                'ID': product.id,
+                'Ürün Adı': product.name,
+                'Marka': product.brand,
+                'Model': product.model,
+                'Seri Numarası': product.serialNumber,
+                'Açıklama': product.description,
+                'Kategori': product.category,
+                'Miktar': product.quantity,
+                'Konum': product.location,
+                'Eklenme Tarihi': new Date(product.dateAdded).toLocaleDateString('tr-TR')
+            }));
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Envanter Listesi');
+            
+            // Export to file
+            XLSX.writeFile(wb, 'envanter-listesi.xlsx');
+        }
+        
+        function exportToPDF() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            
+            if (products.length === 0) {
+                alert('Dışa aktarılacak veri bulunamadı');
+                return;
+            }
+            
+            // Create PDF document
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.text('Siverek Belediyesi Envanter Listesi', 105, 20, null, null, 'center');
+            
+            // Add generation date
+            doc.setFontSize(12);
+            doc.text('Oluşturulma Tarihi: ' + new Date().toLocaleDateString('tr-TR'), 105, 30, null, null, 'center');
+            
+            // Add table
+            const tableColumn = [
+                "ID", "Ürün Adı", "Marka", "Model", "Miktar", "Kategori", "Konum"
+            ];
+            
+            const tableRows = [];
+            
+            products.forEach(product => {
+                const productData = [
+                    product.id,
+                    product.name,
+                    product.brand || '',
+                    product.model || '',
+                    product.quantity.toString(),
+                    product.category,
+                    product.location || ''
+                ];
+                tableRows.push(productData);
+            });
+            
+            // Add table to PDF
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 40,
+                styles: {
+                    fontSize: 8
+                },
+                headStyles: {
+                    fillColor: [17, 115, 212] // Primary color
+                }
+            });
+            
+            // Save the PDF
+            doc.save('envanter-listesi.pdf');
+        }
+        
+        function importData() {
+            alert('Veri içe aktarma özelliği henüz uygulanmadı. Bu özellik ilerleyen sürümlerde eklenecektir.');
+        }
+        
+        function clearAllData() {
+            if (confirm('Tüm envanter verilerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+                localStorage.removeItem('inventoryProducts');
+                alert('Tüm veriler silindi.');
+                // Refresh the page to reflect changes
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

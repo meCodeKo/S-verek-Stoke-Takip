@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Envanter Düzenle - Siverek Belediyesi</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="utils.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "foreground-light": "#101922",
+                        "foreground-dark": "#f6f7f8",
+                        "input-light": "#e9ebee",
+                        "input-dark": "#1c2a38",
+                        "placeholder-light": "#6b7280",
+                        "placeholder-dark": "#9ca3af",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .error-message {
+            display: none;
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .sidebar {
+            width: 80px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white dark:bg-background-dark border-r border-primary/20 dark:border-primary/30 flex flex-col items-center py-4">
+            <div class="mb-8">
+                <img alt="Siverek Municipality Logo" class="w-10 h-10 mx-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbIfQfOwULYctFVQU3_MF_dt6Yi8qc9ltD82f4lr8g82-VAGHf5BeGYYcpY_NcD4Z26-7Nq9Sqm4eKr7IWiEfCwyoSxynz3BlD0nuzyweuL46zJR3IV7CkoCzl0QdAM_eNOFjDZyCJTkRV5nYxgXcUBIbDyc0v5UPW8GRD1uvirnznZjtHG5VWGMttrSEvP4aPTBNXM2wBvkqEEfW-7h86SkxduIHUQqzyTWJMGC22nE8zAs5VJ_EMOJB3bINfbOjiBAo80EA9eU"/>
+            </div>
+            <nav class="flex flex-col items-center space-y-6 flex-grow">
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="index.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <p class="text-xs font-medium mt-1">Pano</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-primary" href="inventory-list.html">
+                    <span class="material-symbols-outlined text-2xl">inventory</span>
+                    <p class="text-xs font-medium mt-1">Envanter</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="reports.html">
+                    <span class="material-symbols-outlined text-2xl">bar_chart</span>
+                    <p class="text-xs font-medium mt-1">Raporlar</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="settings.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <p class="text-xs font-medium mt-1">Ayarlar</p>
+                </a>
+            </nav>
+            <button class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" onclick="logout()">
+                <span class="material-symbols-outlined text-2xl">logout</span>
+                <p class="text-xs font-medium mt-1">Çıkış</p>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col">
+            <header class="bg-background-light dark:bg-background-dark sticky top-0 z-10 shadow-sm">
+                <div class="container mx-auto px-4">
+                    <div class="flex items-center justify-between h-16">
+                        <button class="text-foreground-light dark:text-foreground-dark" onclick="window.location.href='inventory-list.html'">
+                            <span class="material-symbols-outlined">
+                                arrow_back_ios_new
+                            </span>
+                        </button>
+                        <div class="text-center absolute left-1/2 transform -translate-x-1/2">
+                            <h1 class="text-lg font-bold text-foreground-light dark:text-foreground-dark">Siverek Belediyesi Bilgi İşlem Müdürlüğü Depo Takip Sistemi</h1>
+                            <p class="text-md font-bold text-foreground-light dark:text-foreground-dark">Envanter Düzenle</p>
+                        </div>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow container mx-auto px-4 py-6 overflow-y-auto">
+                <form class="space-y-6" id="product-form">
+                    <input type="hidden" id="product-id">
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="item-name">Ürün Adı *</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="item-name" placeholder="Ürün adını girin" type="text"/>
+                        <div class="error-message" id="name-error">Lütfen ürün adını girin</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="brand">Marka</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="brand" placeholder="Markayı girin" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="model">Model</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="model" placeholder="Modeli girin" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="serial-number">Seri Numarası</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="serial-number" placeholder="Seri numarasını girin" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="description">Açıklama</label>
+                        <textarea class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary p-4" id="description" placeholder="Ürün açıklamasını girin" rows="4"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="category">Kategori *</label>
+                        <select class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark focus:ring-2 focus:ring-primary h-12 px-4 appearance-none pr-8 bg-no-repeat bg-right-4" id="category" style="background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3e%3cpath fill=%27none%27 stroke=%27%236b7280%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27m2 5 6 6 6-6%27/%3e%3c/svg%3e');">
+                            <option value="">Kategori seçin</option>
+                            <option value="Bilgisayar">Bilgisayar</option>
+                            <option value="Yazıcı">Yazıcı</option>
+                            <option value="Ağ Cihazı">Ağ Cihazı</option>
+                            <option value="Yazılım">Yazılım</option>
+                            <option value="Diğer">Diğer</option>
+                        </select>
+                        <div class="error-message" id="category-error">Lütfen bir kategori seçin</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="quantity">Miktar *</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="quantity" placeholder="Miktar girin" type="number" min="0"/>
+                        <div class="error-message" id="quantity-error">Lütfen geçerli bir miktar girin</div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="location">Konum</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="location" placeholder="Konum girin" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="low-stock-threshold">Düşük Stok Sınırı</label>
+                        <input class="w-full bg-input-light dark:bg-input-dark border-none rounded-lg text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="low-stock-threshold" placeholder="Düşük stok sınırını girin" type="number" min="0" value="10"/>
+                    </div>
+                </form>
+            </main>
+            <footer class="bg-background-light dark:bg-background-dark sticky bottom-0 z-10 border-t border-input-light dark:border-input-dark">
+                <div class="container mx-auto px-4 py-4">
+                    <div class="flex justify-between space-x-4">
+                        <button class="flex-1 py-3 px-4 rounded-lg bg-red-600 text-white font-bold text-center" onclick="deleteProduct()" id="delete-button">Sil</button>
+                        <button class="flex-1 py-3 px-4 rounded-lg bg-primary text-white font-bold text-center" id="save-button">Güncelle</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-background-dark rounded-lg p-6 max-w-sm w-full mx-4">
+            <div class="text-center">
+                <span class="material-symbols-outlined text-green-500 text-5xl block mb-4">check_circle</span>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Ürün Güncellendi</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Ürün başarıyla güncellendi.</p>
+                <button class="w-full py-2 px-4 rounded-lg bg-primary text-white font-bold" onclick="closeSuccessModal()">Tamam</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentProduct = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Get product ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            if (productId) {
+                loadProduct(productId);
+            } else {
+                window.location.href = 'inventory-list.html';
+            }
+            
+            const saveButton = document.getElementById('save-button');
+            saveButton.addEventListener('click', updateProduct);
+        });
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function loadProduct(productId) {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            currentProduct = products.find(product => product.id === productId);
+            
+            if (!currentProduct) {
+                alert('Ürün bulunamadı');
+                window.location.href = 'inventory-list.html';
+                return;
+            }
+            
+            // Fill form with product data
+            document.getElementById('product-id').value = currentProduct.id;
+            document.getElementById('item-name').value = currentProduct.name || '';
+            document.getElementById('brand').value = currentProduct.brand || '';
+            document.getElementById('model').value = currentProduct.model || '';
+            document.getElementById('serial-number').value = currentProduct.serialNumber || '';
+            document.getElementById('description').value = currentProduct.description || '';
+            document.getElementById('category').value = currentProduct.category || '';
+            document.getElementById('quantity').value = currentProduct.quantity || '';
+            document.getElementById('location').value = currentProduct.location || '';
+            document.getElementById('low-stock-threshold').value = currentProduct.lowStockThreshold || '10';
+        }
+        
+        function updateProduct() {
+            // Get form values
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('item-name').value.trim();
+            const brand = document.getElementById('brand').value.trim();
+            const model = document.getElementById('model').value.trim();
+            const serialNumber = document.getElementById('serial-number').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const category = document.getElementById('category').value;
+            const quantity = document.getElementById('quantity').value;
+            const location = document.getElementById('location').value.trim();
+            const lowStockThreshold = document.getElementById('low-stock-threshold').value || '10';
+            
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Validation
+            let isValid = true;
+            
+            if (!name) {
+                document.getElementById('name-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!category) {
+                document.getElementById('category-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!quantity || quantity < 0) {
+                document.getElementById('quantity-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // Update product object
+            currentProduct.name = name;
+            currentProduct.brand = brand;
+            currentProduct.model = model;
+            currentProduct.serialNumber = serialNumber;
+            currentProduct.description = description;
+            currentProduct.category = category;
+            currentProduct.quantity = parseInt(quantity);
+            currentProduct.location = location;
+            currentProduct.lowStockThreshold = parseInt(lowStockThreshold);
+            
+            // Save to localStorage
+            // Clean up existing invalid products and update the current product
+            const products = cleanInvalidProducts();
+            const updatedProducts = products.map(product => 
+                product.id === currentProduct.id ? currentProduct : product
+            );
+            localStorage.setItem('inventoryProducts', JSON.stringify(updatedProducts));
+            
+            // Show success modal
+            document.getElementById('success-modal').classList.remove('hidden');
+        }
+        
+        function deleteProduct() {
+            if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+                // Clean up invalid products first
+                const products = cleanInvalidProducts();
+                const updatedProducts = products.filter(product => product.id !== currentProduct.id);
+                localStorage.setItem('inventoryProducts', JSON.stringify(updatedProducts));
+                // Redirect to inventory list with cache busting
+                window.location.href = 'inventory-list.html?' + new Date().getTime();
+            }
+        }
+        
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            // Redirect to inventory list with cache busting
+            window.location.href = 'inventory-list.html?' + new Date().getTime();
+        }
+    </script>
+</body>
+</html>

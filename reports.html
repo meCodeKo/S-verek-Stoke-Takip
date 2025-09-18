@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Raporlar - Siverek Belediyesi</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="utils.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .sidebar {
+            width: 80px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white dark:bg-background-dark border-r border-primary/20 dark:border-primary/30 flex flex-col items-center py-4">
+            <div class="mb-8">
+                <img alt="Siverek Municipality Logo" class="w-10 h-10 mx-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbIfQfOwULYctFVQU3_MF_dt6Yi8qc9ltD82f4lr8g82-VAGHf5BeGYYcpY_NcD4Z26-7Nq9Sqm4eKr7IWiEfCwyoSxynz3BlD0nuzyweuL46zJR3IV7CkoCzl0QdAM_eNOFjDZyCJTkRV5nYxgXcUBIbDyc0v5UPW8GRD1uvirnznZjtHG5VWGMttrSEvP4aPTBNXM2wBvkqEEfW-7h86SkxduIHUQqzyTWJMGC22nE8zAs5VJ_EMOJB3bINfbOjiBAo80EA9eU"/>
+            </div>
+            <nav class="flex flex-col items-center space-y-6 flex-grow">
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="index.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <p class="text-xs font-medium mt-1">Pano</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="inventory-list.html">
+                    <span class="material-symbols-outlined text-2xl">inventory</span>
+                    <p class="text-xs font-medium mt-1">Envanter</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-primary" href="reports.html">
+                    <span class="material-symbols-outlined text-2xl">bar_chart</span>
+                    <p class="text-xs font-medium mt-1">Raporlar</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="settings.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <p class="text-xs font-medium mt-1">Ayarlar</p>
+                </a>
+            </nav>
+            <button class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" onclick="logout()">
+                <span class="material-symbols-outlined text-2xl">logout</span>
+                <p class="text-xs font-medium mt-1">Çıkış</p>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col">
+            <header class="flex items-center justify-between p-4 border-b border-primary/20 dark:border-primary/30">
+                <div class="text-center w-full">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Siverek Belediyesi Bilgi İşlem Müdürlüğü Depo Takip Sistemi</h1>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white mt-2">Raporlar</p>
+                </div>
+                <div class="flex items-center gap-2 absolute right-4">
+                    <div class="flex flex-col items-end">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="current-user">Kullanıcı</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" id="user-role">Rol</p>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow p-4 overflow-y-auto">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="report-type">Rapor Tipi</label>
+                        <select class="form-select w-full rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary" id="report-type" name="report-type">
+                            <option value="stock-usage">Stok Kullanımı</option>
+                            <option value="stock-levels">Stok Seviyeleri</option>
+                            <option value="inventory-list">Envanter Listesi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="date-range">Tarih Aralığı</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary" name="start-date" type="date" id="start-date"/>
+                            <input class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary" name="end-date" type="date" id="end-date"/>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2" onclick="exportToExcel()">
+                            <span class="material-symbols-outlined">
+                                grid_on
+                            </span>
+                            <span>Excel</span>
+                        </button>
+                        <button class="flex-1 bg-red-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2" onclick="exportToPDF()">
+                            <span class="material-symbols-outlined">
+                                picture_as_pdf
+                            </span>
+                            <span>PDF</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-8" id="report-container">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Rapor Özeti</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                        <div class="flex flex-col gap-2 rounded-lg p-4 bg-primary/10 dark:bg-primary/20">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Toplam Ürünler</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="total-products">0</p>
+                        </div>
+                        <div class="flex flex-col gap-2 rounded-lg p-4 bg-primary/10 dark:bg-primary/20">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Toplam Adet</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" id="total-quantity">0</p>
+                        </div>
+                        <div class="flex flex-col gap-2 rounded-lg p-4 bg-primary/10 dark:bg-primary/20">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Kritik Stok</p>
+                            <p class="text-2xl font-bold text-red-500" id="critical-stock">0</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-md font-bold text-gray-900 dark:text-white mb-3">Son Eklenen Ürünler</h3>
+                        <div class="space-y-2" id="recent-products">
+                            <div class="text-center py-4 text-gray-500 dark:text-gray-400">
+                                Henüz ürün eklenmemiş
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // Force page to not cache
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, reload to get fresh data
+                window.location.reload();
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display current user info
+            document.getElementById('current-user').textContent = currentUser.username;
+            document.getElementById('user-role').textContent = currentUser.role === 'admin' ? 'Yönetici' : 'Kullanıcı';
+            
+            // Set default dates (last 30 days)
+            const today = new Date();
+            const lastMonth = new Date();
+            lastMonth.setDate(today.getDate() - 30);
+            
+            document.getElementById('start-date').valueAsDate = lastMonth;
+            document.getElementById('end-date').valueAsDate = today;
+            
+            // Load initial report data
+            loadReportData();
+        });
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function loadReportData() {
+            // Clean up invalid products
+            const products = cleanInvalidProducts();
+            
+            // Update summary statistics
+            document.getElementById('total-products').textContent = products.length;
+            
+            const totalQuantity = products.reduce((sum, product) => sum + product.quantity, 0);
+            document.getElementById('total-quantity').textContent = totalQuantity;
+            
+            // Count critical stock using product-specific thresholds
+            let criticalStock = 0;
+            products.forEach(product => {
+                const lowStockThreshold = product.lowStockThreshold || 10;
+                if (product.quantity <= lowStockThreshold) {
+                    criticalStock++;
+                }
+            });
+            document.getElementById('critical-stock').textContent = criticalStock;
+            
+            // Display recent products (last 5 added)
+            displayRecentProducts(products);
+        }
+        
+        function displayRecentProducts(products) {
+            const recentProductsContainer = document.getElementById('recent-products');
+            
+            if (products.length === 0) {
+                recentProductsContainer.innerHTML = '<div class="text-center py-4 text-gray-500 dark:text-gray-400">Henüz ürün eklenmemiş</div>';
+                return;
+            }
+            
+            // Sort by date added (newest first)
+            const sortedProducts = [...products].sort((a, b) => 
+                new Date(b.dateAdded) - new Date(a.dateAdded)
+            );
+            
+            // Show last 5 products
+            const recentProducts = sortedProducts.slice(0, 5);
+            
+            recentProductsContainer.innerHTML = '';
+            
+            recentProducts.forEach(product => {
+                const productEl = document.createElement('div');
+                productEl.className = 'flex items-center gap-4 rounded-lg p-3 bg-white dark:bg-background-dark shadow-sm';
+                productEl.innerHTML = `
+                    <div class="bg-primary/10 rounded-full h-10 w-10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary">inventory_2</span>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-base font-medium text-gray-900 dark:text-white">${product.name}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${product.brand} ${product.model} - Adet: ${product.quantity}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">${new Date(product.dateAdded).toLocaleDateString('tr-TR')}</p>
+                    </div>
+                `;
+                recentProductsContainer.appendChild(productEl);
+            });
+        }
+        
+        function exportToExcel() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            
+            if (products.length === 0) {
+                alert('Dışa aktarılacak veri bulunamadı');
+                return;
+            }
+            
+            // Prepare data for export
+            const exportData = products.map(product => ({
+                'ID': product.id,
+                'Ürün Adı': product.name,
+                'Marka': product.brand,
+                'Model': product.model,
+                'Seri Numarası': product.serialNumber,
+                'Açıklama': product.description,
+                'Kategori': product.category,
+                'Miktar': product.quantity,
+                'Konum': product.location,
+                'Eklenme Tarihi': new Date(product.dateAdded).toLocaleDateString('tr-TR')
+            }));
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Envanter Listesi');
+            
+            // Export to file
+            XLSX.writeFile(wb, 'envanter-listesi.xlsx');
+        }
+        
+        function exportToPDF() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            
+            if (products.length === 0) {
+                alert('Dışa aktarılacak veri bulunamadı');
+                return;
+            }
+            
+            // Create PDF document
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.text('Siverek Belediyesi Envanter Listesi', 105, 20, null, null, 'center');
+            
+            // Add generation date
+            doc.setFontSize(12);
+            doc.text('Oluşturulma Tarihi: ' + new Date().toLocaleDateString('tr-TR'), 105, 30, null, null, 'center');
+            
+            // Add table
+            const tableColumn = [
+                "ID", "Ürün Adı", "Marka", "Model", "Miktar", "Kategori", "Konum"
+            ];
+            
+            const tableRows = [];
+            
+            products.forEach(product => {
+                const productData = [
+                    product.id,
+                    product.name,
+                    product.brand || '',
+                    product.model || '',
+                    product.quantity.toString(),
+                    product.category,
+                    product.location || ''
+                ];
+                tableRows.push(productData);
+            });
+            
+            // Add table to PDF
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 40,
+                styles: {
+                    fontSize: 8
+                },
+                headStyles: {
+                    fillColor: [17, 115, 212] // Primary color
+                }
+            });
+            
+            // Save the PDF
+            doc.save('envanter-listesi.pdf');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Siverek Belediyesi - Envanter Takip Sistemi</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="utils.js"></script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .sidebar {
+            width: 80px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white dark:bg-background-dark border-r border-primary/20 dark:border-primary/30 flex flex-col items-center py-4">
+            <div class="mb-8">
+                <img alt="Siverek Municipality Logo" class="w-10 h-10 mx-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbIfQfOwULYctFVQU3_MF_dt6Yi8qc9ltD82f4lr8g82-VAGHf5BeGYYcpY_NcD4Z26-7Nq9Sqm4eKr7IWiEfCwyoSxynz3BlD0nuzyweuL46zJR3IV7CkoCzl0QdAM_eNOFjDZyCJTkRV5nYxgXcUBIbDyc0v5UPW8GRD1uvirnznZjtHG5VWGMttrSEvP4aPTBNXM2wBvkqEEfW-7h86SkxduIHUQqzyTWJMGC22nE8zAs5VJ_EMOJB3bINfbOjiBAo80EA9eU"/>
+            </div>
+            <nav class="flex flex-col items-center space-y-6 flex-grow">
+                <a class="flex flex-col items-center justify-center gap-1 text-primary" href="index.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <p class="text-xs font-medium mt-1">Pano</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="inventory-list.html">
+                    <span class="material-symbols-outlined text-2xl">inventory</span>
+                    <p class="text-xs font-medium mt-1">Envanter</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="reports.html">
+                    <span class="material-symbols-outlined text-2xl">bar_chart</span>
+                    <p class="text-xs font-medium mt-1">Raporlar</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="settings.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <p class="text-xs font-medium mt-1">Ayarlar</p>
+                </a>
+            </nav>
+            <button class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" onclick="logout()">
+                <span class="material-symbols-outlined text-2xl">logout</span>
+                <p class="text-xs font-medium mt-1">Çıkış</p>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col">
+            <header class="flex items-center justify-between p-4 border-b border-primary/20 dark:border-primary/30">
+                <div class="text-center w-full">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Siverek Belediyesi Bilgi İşlem Müdürlüğü Depo Takip Sistemi</h1>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white mt-2">Pano</p>
+                </div>
+                <div class="flex items-center gap-2 absolute right-4">
+                    <div class="flex flex-col items-end">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="current-user">Kullanıcı</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" id="user-role">Rol</p>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow p-4 overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white dark:bg-background-dark rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="bg-primary/10 rounded-full h-12 w-12 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary">inventory_2</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Toplam Ürün</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white" id="total-products">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-background-dark rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="bg-red-500/10 rounded-full h-12 w-12 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-red-500">error</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Kritik Stok</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white" id="critical-products">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-background-dark rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="bg-yellow-500/10 rounded-full h-12 w-12 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-yellow-500">warning</span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Düşük Stok</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white" id="low-stock">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-background-dark rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-bold text-gray-900 dark:text-white">Son Eklenen Ürünler</h2>
+                        <a class="text-primary text-sm font-medium" href="inventory-list.html">Tümünü Gör</a>
+                    </div>
+                    <div class="space-y-3" id="recent-products">
+                        <div class="text-center py-8 text-gray-500 dark:text-gray-400" id="no-products-message">
+                            <span class="material-symbols-outlined text-3xl block mb-2">inventory_2</span>
+                            <p>Henüz ürün eklenmemiş</p>
+                            <button class="mt-4 text-primary font-medium" onclick="window.location.href='add-product.html'">İlk Ürünü Ekle</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // Force page to not cache
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, reload to get fresh data
+                window.location.reload();
+            }
+        });
+        
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display current user info
+            document.getElementById('current-user').textContent = currentUser.username;
+            document.getElementById('user-role').textContent = currentUser.role === 'admin' ? 'Yönetici' : 'Kullanıcı';
+            
+            // Initialize with sample data if no data exists
+            initializeSampleData();
+            loadDashboardData();
+        });
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function initializeSampleData() {
+            // Clean up any invalid products first
+            cleanInvalidProducts();
+            
+            const existingData = localStorage.getItem('inventoryProducts');
+            if (!existingData) {
+                const sampleProducts = [
+                    {
+                        id: '1',
+                        name: 'Dell Bilgisayar',
+                        brand: 'Dell',
+                        model: 'Inspiron 15',
+                        serialNumber: 'DL123456789',
+                        description: 'Ofis kullanımı için dizüstü bilgisayar',
+                        category: 'Bilgisayar',
+                        quantity: 15,
+                        location: 'Bilgi İşlem Odası',
+                        lowStockThreshold: 10,
+                        dateAdded: new Date().toISOString()
+                    },
+                    {
+                        id: '2',
+                        name: 'HP Yazıcı',
+                        brand: 'HP',
+                        model: 'LaserJet Pro',
+                        serialNumber: 'HP987654321',
+                        description: 'Laser yazıcı, çift taraflı baskı',
+                        category: 'Yazıcı',
+                        quantity: 8,
+                        location: 'Sekreterya',
+                        lowStockThreshold: 5,
+                        dateAdded: new Date().toISOString()
+                    },
+                    {
+                        id: '3',
+                        name: 'Cisco Router',
+                        brand: 'Cisco',
+                        model: 'RV340',
+                        serialNumber: 'CS456789123',
+                        description: 'Kurumsal ağ yönlendirici',
+                        category: 'Ağ Cihazı',
+                        quantity: 3,
+                        location: 'Sunucu Odası',
+                        lowStockThreshold: 2,
+                        dateAdded: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('inventoryProducts', JSON.stringify(sampleProducts));
+            }
+        }
+        
+        function loadDashboardData() {
+            // Clean up invalid products
+            const products = cleanInvalidProducts();
+            
+            const totalProductsEl = document.getElementById('total-products');
+            const criticalProductsEl = document.getElementById('critical-products');
+            const lowStockEl = document.getElementById('low-stock');
+            const recentProductsEl = document.getElementById('recent-products');
+            const noProductsMessage = document.getElementById('no-products-message');
+            
+            // Update counts
+            totalProductsEl.textContent = products.length;
+            
+            // Count critical and low stock products
+            let criticalCount = 0;
+            let lowStockCount = 0;
+            
+            products.forEach(product => {
+                const lowStockThreshold = product.lowStockThreshold || 10;
+                if (product.quantity <= 5) {
+                    criticalCount++;
+                } else if (product.quantity <= lowStockThreshold) {
+                    lowStockCount++;
+                }
+            });
+            
+            criticalProductsEl.textContent = criticalCount;
+            lowStockEl.textContent = lowStockCount;
+            
+            // Show recent products (last 3 added)
+            if (products.length > 0) {
+                noProductsMessage.style.display = 'none';
+                
+                // Sort by date added (newest first)
+                const sortedProducts = [...products].sort((a, b) => 
+                    new Date(b.dateAdded) - new Date(a.dateAdded)
+                );
+                
+                // Show last 3 products
+                const recentProducts = sortedProducts.slice(0, 3);
+                
+                recentProductsEl.innerHTML = '';
+                recentProducts.forEach(product => {
+                    const productEl = document.createElement('div');
+                    productEl.className = 'flex items-center gap-4 rounded-lg p-3 bg-white dark:bg-background-dark shadow-sm';
+                    productEl.innerHTML = `
+                        <div class="bg-primary/10 rounded-full h-10 w-10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">inventory_2</span>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-base font-medium text-gray-900 dark:text-white">${product.name}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Adet: ${product.quantity}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">${new Date(product.dateAdded).toLocaleDateString('tr-TR')}</p>
+                        </div>
+                    `;
+                    recentProductsEl.appendChild(productEl);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

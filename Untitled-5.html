@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Siverek Belediyesi - Envanter Takip Sistemi Giriş</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1173d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              "display": ["Public Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .form-input::placeholder {
+            color: #6b7280;}
+        .dark .form-input::placeholder {
+            color: #9ca3af;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col justify-center min-h-screen items-center px-4">
+<div class="w-full max-w-sm mx-auto">
+<div class="mb-8 text-center">
+<img alt="Siverek Municipality Logo" class="w-28 h-28 mx-auto mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbIfQfOwULYctFVQU3_MF_dt6Yi8qc9ltD82f4lr8g82-VAGHf5BeGYYcpY_NcD4Z26-7Nq9Sqm4eKr7IWiEfCwyoSxynz3BlD0nuzyweuL46zJR3IV7CkoCzl0QdAM_eNOFjDZyCJTkRV5nYxgXcUBIbDyc0v5UPW8GRD1uvirnznZjtHG5VWGMttrSEvP4aPTBNXM2wBvkqEEfW-7h86SkxduIHUQqzyTWJMGC22nE8zAs5VJ_EMOJB3bINfbOjiBAo80EA9eU"/>
+<h1 class="text-2xl font-bold text-gray-900 dark:text-white">Envanter Takip Sistemi</h1>
+<p class="text-gray-600 dark:text-gray-400">Lütfen giriş yapınız</p>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="username">Kullanıcı Adı</label>
+<div class="mt-1">
+<input class="form-input block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" id="username" name="username" placeholder="Kullanıcı adınızı girin" required="" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="password">Şifre</label>
+<div class="mt-1">
+<input class="form-input block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-primary focus:border-primary" id="password" name="password" placeholder="Şifrenizi girin" required="" type="password"/>
+</div>
+</div>
+<div>
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="submit">
+                    Giriş Yap
+                </button>
+</div>
+<div class="text-center">
+<a class="text-sm font-medium text-primary hover:text-primary/80" href="#">
+                    Şifremi Unuttum
+                </a>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

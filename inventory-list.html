@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Envanter Listesi - Siverek Belediyesi</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="utils.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+        .status-critical {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+        .status-low {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+        .status-normal {
+            background-color: #dcfce7;
+            color: #22c55e;
+        }
+        .dark .status-critical {
+            background-color: #7f1d1d;
+            color: #fecaca;
+        }
+        .dark .status-low {
+            background-color: #78350f;
+            color: #fde68a;
+        }
+        .dark .status-normal {
+            background-color: #14532d;
+            color: #bbf7d0;
+        }
+        .sidebar {
+            width: 80px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white dark:bg-background-dark border-r border-primary/20 dark:border-primary/30 flex flex-col items-center py-4">
+            <div class="mb-8">
+                <img alt="Siverek Municipality Logo" class="w-10 h-10 mx-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATbIfQfOwULYctFVQU3_MF_dt6Yi8qc9ltD82f4lr8g82-VAGHf5BeGYYcpY_NcD4Z26-7Nq9Sqm4eKr7IWiEfCwyoSxynz3BlD0nuzyweuL46zJR3IV7CkoCzl0QdAM_eNOFjDZyCJTkRV5nYxgXcUBIbDyc0v5UPW8GRD1uvirnznZjtHG5VWGMttrSEvP4aPTBNXM2wBvkqEEfW-7h86SkxduIHUQqzyTWJMGC22nE8zAs5VJ_EMOJB3bINfbOjiBAo80EA9eU"/>
+            </div>
+            <nav class="flex flex-col items-center space-y-6 flex-grow">
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="index.html">
+                    <span class="material-symbols-outlined text-2xl">dashboard</span>
+                    <p class="text-xs font-medium mt-1">Pano</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-primary" href="inventory-list.html">
+                    <span class="material-symbols-outlined text-2xl">inventory</span>
+                    <p class="text-xs font-medium mt-1">Envanter</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="reports.html">
+                    <span class="material-symbols-outlined text-2xl">bar_chart</span>
+                    <p class="text-xs font-medium mt-1">Raporlar</p>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" href="settings.html">
+                    <span class="material-symbols-outlined text-2xl">settings</span>
+                    <p class="text-xs font-medium mt-1">Ayarlar</p>
+                </a>
+            </nav>
+            <button class="flex flex-col items-center justify-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary" onclick="logout()">
+                <span class="material-symbols-outlined text-2xl">logout</span>
+                <p class="text-xs font-medium mt-1">Çıkış</p>
+            </button>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col">
+            <header class="flex items-center justify-between p-4 border-b border-primary/20 dark:border-primary/30">
+                <div class="text-center w-full">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Siverek Belediyesi Bilgi İşlem Müdürlüğü Depo Takip Sistemi</h1>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white mt-2">Envanter Listesi</p>
+                </div>
+                <div class="flex items-center gap-2 absolute right-4">
+                    <div class="flex flex-col items-end">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="current-user">Kullanıcı</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" id="user-role">Rol</p>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow p-4 overflow-y-auto">
+                <div class="mb-4">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Ürün ara..." class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 focus:ring-primary focus:border-primary pl-10 pr-4 py-2">
+                        <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">search</span>
+                    </div>
+                </div>
+                
+                <div class="mb-4 flex gap-2 overflow-x-auto pb-2">
+                    <button class="px-3 py-1.5 text-sm rounded-full bg-primary text-white whitespace-nowrap" data-category="all">Tümü</button>
+                    <button class="px-3 py-1.5 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 whitespace-nowrap" data-category="Bilgisayar">Bilgisayar</button>
+                    <button class="px-3 py-1.5 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 whitespace-nowrap" data-category="Yazıcı">Yazıcı</button>
+                    <button class="px-3 py-1.5 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 whitespace-nowrap" data-category="Ağ Cihazı">Ağ Cihazı</button>
+                    <button class="px-3 py-1.5 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 whitespace-nowrap" data-category="Yazılım">Yazılım</button>
+                    <button class="px-3 py-1.5 text-sm rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 whitespace-nowrap" data-category="Diğer">Diğer</button>
+                </div>
+                
+                <div class="space-y-3" id="products-container">
+                    <!-- Products will be loaded here -->
+                    <div class="text-center py-8 text-gray-500 dark:text-gray-400" id="no-products-message">
+                        <span class="material-symbols-outlined text-3xl block mb-2">inventory_2</span>
+                        <p>Henüz ürün eklenmemiş</p>
+                        <button class="mt-4 text-primary font-medium" onclick="window.location.href='add-product.html'">İlk Ürünü Ekle</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let allProducts = [];
+        let currentCategory = 'all';
+        let currentSearch = '';
+        
+        // Force page to not cache
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, reload to get fresh data
+                window.location.reload();
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Clean up invalid products
+            cleanInvalidProducts();
+            
+            loadProducts();
+            
+            // Add event listeners for category buttons
+            document.querySelectorAll('[data-category]').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('[data-category]').forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                    });
+                    this.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+                    this.classList.add('bg-primary', 'text-white');
+                    
+                    currentCategory = this.getAttribute('data-category');
+                    filterProducts();
+                });
+            });
+            
+            // Add event listener for search input
+            document.getElementById('search-input').addEventListener('input', function() {
+                currentSearch = this.value.toLowerCase();
+                filterProducts();
+            });
+        });
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function loadProducts() {
+            // Clean up invalid products
+            allProducts = cleanInvalidProducts();
+            filterProducts();
+        }
+        
+        function filterProducts() {
+            let filteredProducts = allProducts;
+            
+            // Filter by category
+            if (currentCategory !== 'all') {
+                filteredProducts = filteredProducts.filter(product => product.category === currentCategory);
+            }
+            
+            // Filter by search term
+            if (currentSearch) {
+                filteredProducts = filteredProducts.filter(product => 
+                    product.name.toLowerCase().includes(currentSearch) ||
+                    product.brand.toLowerCase().includes(currentSearch) ||
+                    product.model.toLowerCase().includes(currentSearch) ||
+                    product.description.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            displayProducts(filteredProducts);
+        }
+        
+        function displayProducts(products) {
+            const container = document.getElementById('products-container');
+            const noProductsMessage = document.getElementById('no-products-message');
+            
+            // Filter out products with empty names (extra safety check)
+            const validProducts = products.filter(product => 
+                product.name && product.name.trim() !== ''
+            );
+            
+            if (validProducts.length === 0) {
+                noProductsMessage.style.display = 'block';
+                container.innerHTML = '';
+                container.appendChild(noProductsMessage);
+                return;
+            }
+            
+            noProductsMessage.style.display = 'none';
+            container.innerHTML = '';
+            
+            validProducts.forEach(product => {
+                const productEl = document.createElement('div');
+                productEl.className = 'rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700 p-4';
+                
+                // Determine status class
+                let statusClass = 'status-normal';
+                let statusText = 'Normal';
+                const lowStockThreshold = product.lowStockThreshold || 10;
+                if (product.quantity <= 5) {
+                    statusClass = 'status-critical';
+                    statusText = 'Kritik';
+                } else if (product.quantity <= lowStockThreshold) {
+                    statusClass = 'status-low';
+                    statusText = 'Düşük';
+                }
+                
+                productEl.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-gray-900 dark:text-white">${product.name}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${product.brand} ${product.model}</p>
+                        </div>
+                        <span class="text-xs px-2 py-1 rounded-full ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Adet: <span class="font-medium">${product.quantity}</span></p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">${product.category}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="text-primary hover:text-primary/80" onclick="viewProduct('${product.id}')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" onclick="deleteProduct('${product.id}')">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productEl);
+            });
+        }
+        
+        function viewProduct(productId) {
+            // For now, we'll just redirect to edit page
+            // In a full implementation, we would pass the product ID
+            window.location.href = 'edit-product.html?id=' + productId;
+        }
+        
+        function deleteProduct(productId) {
+            if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+                // Clean up invalid products first
+                let products = cleanInvalidProducts();
+                const updatedProducts = products.filter(product => product.id !== productId);
+                localStorage.setItem('inventoryProducts', JSON.stringify(updatedProducts));
+                filterProducts(); // Refresh the display
+            }
+        }
+        
+        function exportToExcel() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            
+            if (products.length === 0) {
+                alert('Dışa aktarılacak veri bulunamadı');
+                return;
+            }
+            
+            // Prepare data for export
+            const exportData = products.map(product => ({
+                'ID': product.id,
+                'Ürün Adı': product.name,
+                'Marka': product.brand,
+                'Model': product.model,
+                'Seri Numarası': product.serialNumber,
+                'Açıklama': product.description,
+                'Kategori': product.category,
+                'Miktar': product.quantity,
+                'Konum': product.location,
+                'Eklenme Tarihi': new Date(product.dateAdded).toLocaleDateString('tr-TR')
+            }));
+            
+            // Create worksheet
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Envanter Listesi');
+            
+            // Export to file
+            XLSX.writeFile(wb, 'envanter-listesi.xlsx');
+        }
+        
+        function exportToPDF() {
+            // Clean up invalid products first
+            const products = cleanInvalidProducts();
+            
+            if (products.length === 0) {
+                alert('Dışa aktarılacak veri bulunamadı');
+                return;
+            }
+            
+            // Create PDF document
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.text('Siverek Belediyesi Envanter Listesi', 105, 20, null, null, 'center');
+            
+            // Add generation date
+            doc.setFontSize(12);
+            doc.text('Oluşturulma Tarihi: ' + new Date().toLocaleDateString('tr-TR'), 105, 30, null, null, 'center');
+            
+            // Add table
+            const tableColumn = [
+                "ID", "Ürün Adı", "Marka", "Model", "Miktar", "Kategori", "Konum"
+            ];
+            
+            const tableRows = [];
+            
+            products.forEach(product => {
+                const productData = [
+                    product.id,
+                    product.name,
+                    product.brand || '',
+                    product.model || '',
+                    product.quantity.toString(),
+                    product.category,
+                    product.location || ''
+                ];
+                tableRows.push(productData);
+            });
+            
+            // Add table to PDF
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 40,
+                styles: {
+                    fontSize: 8
+                },
+                headStyles: {
+                    fillColor: [17, 115, 212] // Primary color
+                }
+            });
+            
+            // Save the PDF
+            doc.save('envanter-listesi.pdf');
+        }
+        
+        function importFromExcel() {
+            // Create a hidden file input element
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.xlsx, .xls';
+            fileInput.style.display = 'none';
+            
+            // Add event listener for file selection
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const firstSheetName = workbook.SheetNames[0];
+                            const worksheet = workbook.Sheets[firstSheetName];
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                            
+                            // Process imported data
+                            const importedProducts = [];
+                            jsonData.forEach((row, index) => {
+                                // Check if row has required data (at least a product name)
+                                const productName = row['Ürün Adı'] || row['Urun Adi'] || row['Name'] || '';
+                                
+                                // Only import rows with a product name
+                                if (productName && productName.trim() !== '') {
+                                    const product = {
+                                        id: Date.now().toString() + index, // Generate unique ID
+                                        name: productName,
+                                        brand: row['Marka'] || row['Brand'] || '',
+                                        model: row['Model'] || '',
+                                        serialNumber: row['Seri Numarası'] || row['Seri Numarasi'] || row['Serial Number'] || '',
+                                        description: row['Açıklama'] || row['Aciklama'] || row['Description'] || '',
+                                        category: row['Kategori'] || row['Category'] || 'Diğer',
+                                        quantity: parseInt(row['Miktar'] || row['Quantity'] || 0),
+                                        location: row['Konum'] || row['Location'] || '',
+                                        lowStockThreshold: parseInt(row['Düşük Stok Sınırı'] || row['Dusuk Stok Siniri'] || row['Low Stock Threshold'] || 10),
+                                        dateAdded: new Date().toISOString()
+                                    };
+                                    
+                                    // Validate quantity is a number
+                                    if (isNaN(product.quantity)) {
+                                        product.quantity = 0;
+                                    }
+                                    
+                                    // Validate lowStockThreshold is a number
+                                    if (isNaN(product.lowStockThreshold)) {
+                                        product.lowStockThreshold = 10;
+                                    }
+                                    
+                                    importedProducts.push(product);
+                                }
+                            });
+                            
+                            if (importedProducts.length === 0) {
+                                alert('İçe aktarılacak geçerli ürün bulunamadı. Lütfen dosyanızın doğru formatta olduğundan emin olun.');
+                                return;
+                            }
+                            
+                            // Clean up existing invalid products and add new ones
+                            const existingProducts = cleanInvalidProducts();
+                            const allProducts = [...existingProducts, ...importedProducts];
+                            localStorage.setItem('inventoryProducts', JSON.stringify(allProducts));
+                            
+                            // Refresh the display
+                            loadProducts();
+                            
+                            alert(`${importedProducts.length} ürün başarıyla içe aktarıldı.`);
+                        } catch (error) {
+                            console.error('Import error:', error);
+                            alert('Dosya içe aktarılırken bir hata oluştu. Lütfen geçerli bir Excel dosyası seçtiğinizden emin olun.');
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+            });
+            
+            // Trigger file selection
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
+        }
+    </script>
+</body>
+</html>
