@@ -191,6 +191,21 @@
                 window.location.href = 'login.html';
                 return;
             }
+            
+            // Add event listener to save button
+            document.getElementById('save-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                saveProduct();
+            });
+            
+            // Add event listener for Enter key in form fields
+            const form = document.getElementById('product-form');
+            form.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    saveProduct();
+                }
+            });
         });
         
         function logout() {
